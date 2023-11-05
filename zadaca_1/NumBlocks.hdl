@@ -1,0 +1,53 @@
+CHIP NumBlocks {
+	IN in[16];
+	OUT out[16];
+
+	PARTS:
+	Xor(a = in[0], b = in[1], out = d0);
+	Xor(a = in[1], b = in[2], out = d1);
+	Xor(a = in[2], b = in[3], out = d2);
+	Xor(a = in[3], b = in[4], out = d3);
+	Xor(a = in[4], b = in[5], out = d4);
+	Xor(a = in[5], b = in[6], out = d5);
+	Xor(a = in[6], b = in[7], out = d6);
+	Xor(a = in[7], b = in[8], out = d7);
+	Xor(a = in[8], b = in[9], out = d8);
+	Xor(a = in[9], b = in[10], out = d9);
+	Xor(a = in[10], b = in[11], out = d10);
+	Xor(a = in[11], b = in[12], out = d11);
+	Xor(a = in[12], b = in[13], out = d12);
+	Xor(a = in[13], b = in[14], out = d13);
+	Xor(a = in[14], b = in[15], out = d14);
+
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d0, out = a0);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d1, out = a1);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d2, out = a2);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d3, out = a3);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d4, out = a4);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d5, out = a5);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d6, out = a6);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d7, out = a7);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d8, out = a8);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d9, out = a9);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d10, out = a10);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d11, out = a11);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d12, out = a12);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d13, out = a13);
+	Mux16(b[0] = true, b[1..15] = false, a[0..15] = false, sel = d14, out = a14);
+
+	Add16(a[0] = true, a[1..15] = false, b = a0, out = o1);
+	Add16(a = o1, b = a1, out = o2);
+	Add16(a = o2, b = a2, out = o3);
+	Add16(a = o3, b = a3, out = o4);
+	Add16(a = o4, b = a4, out = o5);
+	Add16(a = o5, b = a5, out = o6);
+	Add16(a = o6, b = a6, out = o7);
+	Add16(a = o7, b = a7, out = o8);
+	Add16(a = o8, b = a8, out = o9);
+	Add16(a = o9, b = a9, out = o10);
+	Add16(a = o10, b = a10, out = o11);
+	Add16(a = o11, b = a11, out = o12);
+	Add16(a = o12, b = a12, out = o13);
+	Add16(a = o13, b = a13, out = o14);
+	Add16(a = o14, b = a14, out = out);
+}
