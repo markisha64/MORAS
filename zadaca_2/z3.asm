@@ -43,6 +43,8 @@ M = D;
 
 (MUL)
         // v0 iterator
+        @A1
+        D = M;
         @V0
         M = D;
 
@@ -135,7 +137,7 @@ M = D;
         @A0
         M = D;
 
-        @2
+        @3
         D = A;
         @A1
         M = D;
@@ -145,7 +147,7 @@ M = D;
         @RA
         M = D;
 
-        @DIV
+        @MUL
         0; JMP
 
         (t0)
