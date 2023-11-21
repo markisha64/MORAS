@@ -129,33 +129,98 @@ M = D;
               
 
 (MAIN)
-        @B
-        D = M;
-
-        @44
+        @100
         D = A;
-        @A0
+        @i
         M = D;
 
-        @3
-        D = A;
-        @A1
-        M = D;
+        (LOOP_I)
+                @225
+                D = A;
+                @i
+                D = M - D;
+                @LOOP_I_END
+                D; JEQ
+  
+                @100
+                D = A;
+                @j
+                M = D;
 
-        @t0
-        D = A;
-        @RA
-        M = D;
+                (LOOP_J)
+                        @225
+                        D = A;
+                        @j
+                        D = M - D;
+                        @LOOP_J_END
+                        D; JEQ
 
-        @MUL
-        0; JMP
+                        @i
+                        D = M;
+                        @A1
+                        M = D;
+                        @256
+                        D = A;
+                        @A0
+                        M = D;
+                        @RMUL
+                        D = A;
+                        @RA
+                        M = D;
+                        @MUL
+                        0; JMP
 
-        (t0)
-        @RV
-        D = M;
-        @0
-        M = D;
+                        (RMUL)
+                        @RV
+                        D = M;
+                        @V2
+                        M = D; 
+                        
+                        @j
+                        D = M;
+                        @3
+                        D = D & M;
 
+                        @V3
+                        M = D;
+                        
+                        @A0
+                        M = D;
+                        @4
+                        D = A;
+                        @A1
+                        M = D;
+                        @RMUL1
+                        D = A;                    
+                        @RA
+                        M = D;
+                        @MUL
+                        0; JMP
+
+                        (RMUL1)
+                        @RV
+                        D = M;
+                        @V2
+                        M = D + M;
+                        D = M;
+
+                        @SCREEN
+                        A = A + D;
+                        M = -1;
+        
+                        @j
+                        M = M + 1;
+
+                        @LOOP_J
+                        0; JMP
+                (LOOP_J_END)
+                
+                @i
+                M = M + 1;
+                
+                @LOOP_I
+                0; JMP
+        (LOOP_I_END)
 
         (MAIN_END)
                 @MAIN_END
