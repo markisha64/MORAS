@@ -24,13 +24,13 @@ M = D;
         0; JMP
 (LOOP_I_END)
 
-@4032
+@4096
 D = A;
 @i
 M = D;
 
 (LOOP_I_0)
-        @4040
+        @4104
         D = A;
         @i
         D = M - D;
@@ -61,7 +61,7 @@ M = D;
         @i
         D = M - D;
         @LOOP_I_1_END
-        D; JGE
+        D; JEQ
 
         @i
         D = M;
@@ -70,19 +70,53 @@ M = D;
         @AD
         M = D;
         @1
-        D = M;
+        D = A;
         @AD
         A = M;
         M = M | D;
 
         @32
-        D = M
+        D = A;
         @i
         M = M + D;
 
         @LOOP_I_1
         0; JMP
 (LOOP_I_1_END)
+
+@40
+D = A;
+@i
+M = D;
+
+(LOOP_I_2)
+        @4136
+        D = A;
+        @i
+        D = M - D;
+        @LOOP_I_2_END
+        D; JEQ
+
+        @i
+        D = M;
+        @SCREEN
+        D = A + D;
+        @AD
+        M = D;
+        @1
+        D = A;
+        @AD
+        A = M;
+        M = M | D;
+
+        @32
+        D = A;
+        @i
+        M = M + D;
+
+        @LOOP_I_2
+        0; JMP
+(LOOP_I_2_END)
 
 (END)
 @END
