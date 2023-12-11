@@ -10,7 +10,8 @@ class Parser:
     from parseLines import _parse_lines, _parse_line
     from parseComms import _parse_commands, _parse_command, _init_comms
     from parseSymbs import _parse_symbols, _parse_labels, _parse_variables, _init_symbols
-
+    from parseMacros import _parseMacro, _parseMacros, _handleMacro, _findMacros
+    
     def __init__(self, filename):
         # Otvaramo input asemblersku datoteku.
         try:
@@ -41,6 +42,13 @@ class Parser:
             Parser._error("PL", self._line, self._errm)
             return
 
+        self._parseMacros()
+        if self._flag == False:
+            Parser._error("ML", self._line, self._errm)
+            return
+
+        [print(line) for line in self._lines]
+        
         # oznake
         self._labels = {}
         self._variables = {}
@@ -85,7 +93,7 @@ class Parser:
             self._outfile.write(line)
             if (line[-1] != "\n"):
                 self._outfile.write("\n")
-
+            
     # Funkcija iterira procitanim linijama i na svaku primjenjuje funkciju
     # "func". Funkcija "func" vraća string koji odgovara vrijednosti parsirane
     # linije.
