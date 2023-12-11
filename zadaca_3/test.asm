@@ -1,4 +1,15 @@
 
+@5
+D = A
+@n
+M = D
+@s
+M = 0
+
 $WHILE(n)
-        $MV(0, 1)
+	$SUM(s, n, s)
+	@n
+	M = M - 1
 $END
+
+$SWP(0, s)

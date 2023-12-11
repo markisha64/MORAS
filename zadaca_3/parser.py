@@ -47,7 +47,7 @@ class Parser:
             Parser._error("ML", self._line, self._errm)
             return
 
-        [print(line) for line in self._lines]
+        # [print(line) for line in self._lines]
         
         # oznake
         self._labels = {}

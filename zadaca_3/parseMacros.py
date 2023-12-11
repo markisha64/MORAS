@@ -84,7 +84,7 @@ def _handleMacro(self, macro):
         end_number = self._whileStack.pop()
 
         return ([
-            f"(WHILE_MACRO_{end_number})",
+            f"@WHILE_MACRO_{end_number}",
             "0;JMP",
             f"(END_MACRO_{end_number})"
         ], idx)
