@@ -129,3 +129,4 @@ class Parser:
 if __name__ == "__main__":
     Parser("test")
     Parser("z3a")
+    Parser("z3b")
