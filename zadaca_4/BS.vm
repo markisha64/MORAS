@@ -1,0 +1,113 @@
+
+// THAT = [2, 3, 4, 6, 7, 8, 9]
+push constant 4264
+pop pointer 1
+
+push constant 2
+pop that 0
+push constant 3
+pop that 1
+push constant 4
+pop that 2
+push constant 6
+pop that 3
+push constant 7
+pop that 4
+push constant 8
+pop that 5
+push constant 9
+pop that 6
+push pointer 1
+
+// BS.search(4264, 7, 5)
+push constant 7
+push constant 4
+call BS.search 3
+
+return
+
+// BS.search(a, b, c)
+function BS.search 3
+	// THAT = a
+	push argument 0
+	pop pointer 1
+
+	// low = 0
+	push constant 0
+	pop local 0
+
+	// high = b
+	push argument 1
+	pop local 1
+
+label loop
+	// if (low > high) goto loopEnd;
+	push local 0
+	push local 1
+	lt
+	neg
+	if-goto loopEnd
+
+	// mid = (low + high) / 2
+	push local 0
+	push local 1
+	add
+	push constant 2
+	call div.Div 2
+	push temp 0
+	pop local 2
+
+	// THAT manip
+	push argument 0
+	push local 2
+	add
+	pop pointer 1	
+
+	// if (THAT[mid] < c)
+	push argument 2
+	push that 0
+	lt
+
+	if-goto lessThan
+
+	// high = mid
+	push local 2
+	pop local 1
+
+label lessThan
+	// low = mid + 1
+	push local 2
+	push constant 1
+	add
+	pop local 0
+
+label finishCycle
+	push argument 0
+	pop pointer 1
+
+	goto loop
+	
+label loopEnd
+
+	// if (THAT[mid] == c)
+	push argument 0
+	push local 2
+	add
+	pop pointer 1
+
+	push that 0
+	push argument 2
+	eq
+
+	if-goto found
+
+	// return -1
+	push constant 0
+	push constant 1
+	sub
+	return
+
+label found
+	// return mid
+	push local 2
+	return
