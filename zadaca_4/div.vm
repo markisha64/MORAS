@@ -1,8 +1,7 @@
-function div.Main 0
-	push constant 5
-	push constant 2
-	call div.Div 2
-	return
+push constant 5
+push constant 2
+call div.Div 2
+return
 
 function div.Div 2
 	// Q = 0
