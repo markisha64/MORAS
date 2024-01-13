@@ -12,10 +12,11 @@ class Parser:
             Parser._error("File", -1, "Cannot open source file.")
             return
 
-        self._name = filename # Ime datoteke.
-        self._lines = [] # Linije koda.
-        self._flag = True # Je li parsiranje uspjesno?
+        self._name = filename  # Ime datoteke.
+        self._lines = []  # Linije koda.
+        self._flag = True  # Je li parsiranje uspjesno?
         self._func = ""
+        self._labels = set()
 
         # Citamo linije koda iz VM datoteke.
         try:
@@ -42,6 +43,15 @@ class Parser:
             Parser._error("File", -1, "Cannot write to destination file.")
             return
 
+    def _findLabels(self):
+        for (line, n) in self._lines:
+            l = line.split("//")[0].split()
+            if len(l) == 0 or len(l[0]) == 0:
+                return ""
+
+            if len(l) == 2 or l[0] == "label":
+                self._labels.add(l[1])
+
     def _parseLines(self):
         lines = []
         for (line, n) in self._lines:
@@ -67,27 +77,37 @@ class Parser:
             return ""
 
         if l[0] == "push":
-            if len(l) == 3:
+            if len(l) == 3 and l[2].isdigit() and int(l[2]) >= 0:
                 return "//" + " ".join(l) + "\n" + self._push(l[1], l[2], n)
             else:
                 self._flag = False
-                Parser._error("Parser", n, "Undefined command");
+                Parser._error("Parser", n, "Undefined command")
                 return ""
 
         elif l[0] == "pop":
-            if len(l) == 3:
+            if len(l) == 3 and l[2].isdigit() and int(l[2]) >= 0:
                 return "//" + " ".join(l) + "\n" + self._pop(l[1], l[2], n)
             else:
                 self._flag = False
-                Parser._error("Parser", n, "Undefined command");
+                Parser._error("Parser", n, "Undefined command")
                 return ""
-        
+
         elif len(l) > 1 or l[0] == "return":
             if l[0] == "label" and len(l) == 2:
                 return "//" + " ".join(l) + "\n" + self._label(l[1], n)
             elif l[0] == "goto" and len(l) == 2:
+                if l[1] not in self._labels:
+                    self._flag = False
+                    Parser._error("Parser", n, "Label doesn't exist")
+                    return
+
                 return "//" + " ".join(l) + "\n" + self._goto(l[1], n)
             elif l[0] == "if-goto" and len(l) == 2:
+                if l[1] not in self._labels:
+                    self._flag = False
+                    Parser._error("Parser", n, "Label doesn't exist")
+                    return
+
                 return "//" + " ".join(l) + "\n" + self._ifgoto(l[1], n)
             elif l[0] == "function" and len(l) == 3:
                 return "//" + " ".join(l) + "\n" + self._function(l[1], l[2], n)
@@ -95,7 +115,6 @@ class Parser:
                 return "//" + " ".join(l) + "\n" + self._call(l[1], l[2], n)
             elif l[0] == "return" and len(l) == 1:
                 return "//" + " ".join(l) + "\n" + self._return(n)
-            
 
         elif len(l) == 1:
             return "//" + " ".join(l) + "\n" + self._comm(l[0], n)
@@ -126,7 +145,7 @@ class Parser:
             l = "@" + str(3 + int(loc)) + "\nD=M"
         else:
             self._flag = False
-            Parser._error("Push", n, "Undefined source \"" + src + "\".");
+            Parser._error("Push", n, "Undefined source \"" + src + "\".")
             return ""
         return l + "@SP\nM=M+1\nA=M-1\nM=D"
 
@@ -137,13 +156,17 @@ class Parser:
     #   3. n - linija izvornog koda (radi vracanja greske).
     def _pop(self, dst, loc, n):
         if dst == "local":
-            l = "@" + str(loc) + "\nD=A\n@LCL\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
+            l = "@" + \
+                str(loc) + "\nD=A\n@LCL\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
         elif dst == "argument":
-            l = "@" + str(loc) + "\nD=A\n@ARG\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
+            l = "@" + \
+                str(loc) + "\nD=A\n@ARG\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
         elif dst == "this":
-            l = "@" + str(loc) + "\nD=A\n@THIS\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
+            l = "@" + \
+                str(loc) + "\nD=A\n@THIS\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
         elif dst == "that":
-            l = "@" + str(loc) + "\nD=A\n@THAT\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
+            l = "@" + \
+                str(loc) + "\nD=A\n@THAT\nD=D+M\n@R15\nM=D\n@SP\nAM=M-1\nD=M\n@R15\nA=M\nM=D"
         elif dst == "static":
             l = "@SP\nAM=M-1\nD=M\n@" + self._name + "." + str(loc) + "\nM=D"
         elif dst == "temp":
@@ -152,7 +175,7 @@ class Parser:
             l = "@SP\nAM=M-1\nD=M\n@" + str(3 + int(loc)) + "\nM=D"
         else:
             self._flag = False
-            Parser._error("Push", n, "Undefined destination \"" + dst + "\".");
+            Parser._error("Push", n, "Undefined destination \"" + dst + "\".")
             return ""
         return l
 
@@ -203,74 +226,74 @@ class Parser:
             l = "@256\nD=A\n@SP\nM=D"
         else:
             self._flag = False
-            Parser._error("Push", n, "Undefined command \"" + comm + "\".");
+            Parser._error("Push", n, "Undefined command \"" + comm + "\".")
             return ""
         return l
-    
+
     def _label(self, lab, n):
         return "(" + self._func + "$" + lab + ")"
-    
+
     def _goto(self, lab, n):
         return "@" + self._func + "$" + lab + "\n0;JMP"
-    
+
     def _ifgoto(self, lab, n):
         return "@SP\nAM=M-1\nD=M+1\n@" + self._func + "$" + lab + "\nD;JEQ"
-        
+
     def _function(self, func, nvars, n):
         self._func = self._name + "." + func
         s = "(" + self._name + "." + func + ")"
         for i in range(int(nvars)):
             s += "\n@SP\nM=M+1\nA=M-1\nM=0"
         return s
-    
+
     def _return(self, n):
         # endFrame - R15
         # redAddr  - R14
-        
+
         # endFrame = LCL
-        s  = "@LCL\nD=M\n@R15\nM=D\n"
-        
-        # retAddr = *(endFrame – 5)  
+        s = "@LCL\nD=M\n@R15\nM=D\n"
+
+        # retAddr = *(endFrame – 5)
         s += "@5\nD=A\n@R15\nA=M-D\nD=M\n@R14\nM=D\n"
-        
+
         # *ARG = pop()
         s += "@SP\nAM=M-1\nD=M\n@ARG\nA=M\nM=D\n"
-        
+
         # SP = ARG + 1
         s += "@ARG\nD=M+1\n@SP\nM=D\n"
-        
+
         # THAT = *(endFrame – 1)
         s += "@R15\nAM=M-1\nD=M\n@THAT\nM=D\n"
-        
+
         # THIS = *(endFrame – 2)
         s += "@R15\nAM=M-1\nD=M\n@THIS\nM=D\n"
-        
-        # ARG = *(endFrame – 3)        
+
+        # ARG = *(endFrame – 3)
         s += "@R15\nAM=M-1\nD=M\n@ARG\nM=D\n"
-        
-        # LCL = *(endFrame – 4)        
+
+        # LCL = *(endFrame – 4)
         s += "@R15\nAM=M-1\nD=M\n@LCL\nM=D\n"
-        
-        # goto retAddr                          
+
+        # goto retAddr
         s += "@R14\nA=M\n0;JMP"
-        
+
         return s
-    
-    def _call(self, func, nargs, n): 
+
+    def _call(self, func, nargs, n):
         push = "@SP\nM=M+1\nA=M-1\nM=D\n"
-        
+
         retAddrLabel = func + "$ret" + str(self._lab)
-        self._lab += 1    
-        
+        self._lab += 1
+
         # push retAddrLabel
-        s  = "@" + retAddrLabel + "\nD=A\n" + push
-        
+        s = "@" + retAddrLabel + "\nD=A\n" + push
+
         # push LCL
         s += "@LCL\nD=M\n" + push
-        
+
         # push ARG
         s += "@ARG\nD=M\n" + push
-        
+
         # push THIS
         s += "@THIS\nD=M\n" + push
 
@@ -279,16 +302,16 @@ class Parser:
 
         # ARG = SP - 5 - nargs
         s += "@" + str(5 + int(nargs)) + "\nD=A\n@SP\nD=M-D\n@ARG\nM=D\n"
-        
+
         # LCL = SP
         s += "@SP\nD=M\n@LCL\nM=D\n"
-        
+
         # goto func
         s += "@" + func + "\n0;JMP\n"
-        
+
         # (redAddrLabel)
         s += "(" + retAddrLabel + ")"
-        
+
         return s
 
     def _readFile(self):
@@ -311,11 +334,13 @@ class Parser:
         else:
             print(msg)
 
+
 def main():
     P = Parser()
     P.parseFile("main")
     P.parseFile("sum")
     P.writeFile("test")
+
 
 if __name__ == '__main__':
     main()
