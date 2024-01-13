@@ -39,14 +39,10 @@ function Main.main 0
 	push constant 5
 	call BS.search 3
 
-	pop temp 5
-
 	// BS.search(4264, 7, 4)
 	push pointer 1
 	push constant 7
 	push constant 4
 	call BS.search 3
-
-	pop temp 6
 	
 	return

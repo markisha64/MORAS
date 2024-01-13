@@ -16,11 +16,8 @@ label loop
 	// if (low >= high) goto loopEnd;
 	push local 0
 	push local 1
-	gt
-	push local 0
-	push local 1
-	eq
-	or
+	lt
+	not
 	if-goto loopEnd
 
 	// mid = (low + high) / 2
@@ -41,8 +38,8 @@ label loop
 	pop pointer 1	
 
 	// if (THAT[mid] < c)
-	push argument 2
 	push that 0
+	push argument 2
 	lt
 
 	if-goto lessThan
@@ -68,9 +65,9 @@ label finishCycle
 	
 label loopEnd
 
-	// if (THAT[mid] == c)
+	// if (THAT[low] == c)
 	push argument 0
-	push local 2
+	push local 0
 	add
 	pop pointer 1
 
@@ -87,6 +84,6 @@ label loopEnd
 	return
 
 label found
-	// return mid
-	push local 2
+	// return low
+	push local 0
 	return
