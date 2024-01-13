@@ -1,8 +1,5 @@
-push constant 5
-call pell.Pell 1
-return
-
-function pell.Pell 2
+// pell(a)
+function Pell.pell 2
 	push argument 0
 	push constant 2
 	gt
@@ -18,7 +15,7 @@ label nr
 	sub
 
 	// pell(a - 1)
-	call pell.Pell 1
+	call Pell.pell 1
 
 	// l1 = l0 + l0
 	pop local 0
@@ -32,7 +29,7 @@ label nr
 	sub
 
 	// pell(a - 2)
-	call pell.Pell 1
+	call Pell.pell 1
 	push local 1
 	add
 
