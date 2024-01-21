@@ -80,7 +80,40 @@ class vint {
 		return 1;
 	}
 
-	function elems(vint a, vint b) {
-		return;
+	function bool elems(vint a, vint b) {
+		var int ln;
+		var int i;
+		var int j;
+		var int counta;
+		var int countb;
+	
+		if (~(a.len() = b.len())) {
+			return false;
+		}
+
+		let i = 0;
+		let ln = a.len();
+
+		while (i < ln) {
+			let j = 0;
+			let counta = 0;
+			let countb = 0;
+
+			while (j < ln) {
+				if (a.get(i) = a.get(j)) {
+					let counta = counta + 1;
+				}
+
+				if (a.get(i) = b.get(j)) {
+					let countb = countb + 1;
+				}
+			}
+
+			if (~(counta = countb)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
