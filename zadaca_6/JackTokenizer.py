@@ -228,14 +228,22 @@ class Tokenizer:
 
     # Znamo da je token int pa ga parsiramo.
     def _parseInt(self):
+        print(self._line)
         ret = 0
         while len(self._line):
             c = self._line[0]
             if c in numberChars:
                 ret = ret * 10 + int(c)
-            else:
+            elif c in symbols:
                 break
-            self._line = self._line[1:]
+            else:
+                raise JackError('Sytax error in line ' + str(self._lineNum) + ': illegal character "' + c + '".')
+
+                self._line = self._line[1:]
+
+        if ret > 32767:
+            raise JackError('Sytax error in line ' + str(self._lineNum) + ': int constant out of range "' + c + '".')
+        
         return ret
 
     # Znamo da je token keyword ili identifier pa ga parsiramo.
